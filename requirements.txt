@@ -1,0 +1,56 @@
+# AIR-OPD runtime dependencies.
+#
+# Version provenance is recorded per line.  Where the source project did not
+# record a version, the line is left unpinned and explicitly marked.
+
+# --- Core training stack -----------------------------------------------------
+# torch 2.8.0+cu128: environment registry
+# artifacts/registry_sync/h100_20260712_s049/ENVIRONMENTS.md (env
+# opsd-flashattn2-h100-py310-torch28 and the two DAPO/VERL envs, all torch 2.8.0,
+# CUDA 12.8) and the OPSD train/eval default env.
+torch==2.8.0
+
+# transformers 4.57.1: same ENVIRONMENTS.md rows (transformers column = 4.57.1).
+transformers==4.57.1
+
+# trl 0.26.0: REQUIRED. air_opd/train.py and air_opd/opsd/trainer.py import
+# trl.experimental.gold, which does not exist in trl 1.x.
+trl==0.26.0
+
+# accelerate: required by the trainer, but no pinned version was recorded in the
+# source project.
+accelerate  # unpinned: version not recorded in source project
+
+# datasets: required by air_opd/train.py, but no pinned version was recorded.
+datasets  # unpinned: version not recorded in source project
+
+# peft: required for LoRA adapters (train.py get_peft_config), no version recorded.
+peft  # unpinned: version not recorded in source project
+
+# wandb: optional. air_opd/train.py wraps the import in try/except and falls
+# back to a no-op, and air_opd/opsd/trainer.py imports it only when
+# transformers reports it available. No version was recorded.
+wandb  # optional; unpinned: version not recorded in source project
+
+# --- Verifier stack ----------------------------------------------------------
+# math-verify 0.9.0: hard requirement. air_opd/core/math_verifier_binary.py sets
+# REQUIRED_MATH_VERIFY_VERSION = "0.9.0" and raises when the installed version
+# differs. The binary profiles also require the antlr4 9.3 extra.
+math-verify[antlr4_9_3]==0.9.0
+
+# latex2sympy2_extended: required by the binary math verifier; the source project
+# only ever had it as a cluster overlay (PYTHONPATH=.../opsd-mathverify090-overlay),
+# with no recorded version.
+latex2sympy2_extended  # unpinned: version not recorded in source project
+
+# --- Inference / evaluation --------------------------------------------------
+# vllm: training used 0.11.0 (ENVIRONMENTS.md, OPSD train/eval env). The
+# evaluation of the released OOD Avg@4 artifacts was run on vllm 0.21.0 on an
+# RTX 5090 (the eval/ood/ campaign). vllm ships a different wheel per CUDA/GPU
+# target, so install the version matching the runtime you are on: pin 0.11.0
+# for the training recipe as released, or 0.21.0 for the eval scripts.
+vllm==0.11.0
+# vllm==0.21.0
+
+# flash-attn 2.8.3: ENVIRONMENTS.md flash_attn column = 2.8.3 for all OPSD envs.
+flash-attn==2.8.3

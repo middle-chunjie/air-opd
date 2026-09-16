@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+eggs/
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Tooling / editors
+.DS_Store
+.idea/
+.vscode/
+
+# Run outputs
+outputs/
+checkpoints/
+wandb/
+
+# Model artifacts
+*.pt
+*.safetensors
